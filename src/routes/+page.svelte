@@ -1,7 +1,22 @@
 <script>
+    import AreaChoice from "../lib/AreaChoice.svelte";
+import TwoOptionChoice from "../lib/TwoOptionChoice.svelte";
+
+	const stages = {
+		landing: 'landing',
+		generes: 'generes',
+		oldOrNew: 'old-or-new',
+		domesticOrForeign: 'domestic-or-foreign',
+	}
+	const stagesList = [stages.landing, stages.generes, stages.oldOrNew, stages.domesticOrForeign]
+	let currentStageIndex = 0;
+	$: if(currentStageIndex >= stagesList.length) {
+		currentStageIndex = 0;
+	}
+	$: currentStage = stagesList[currentStageIndex]
 	let inputsVisible = false;
 	function handleClick(e) {
-		inputsVisible = true;
+		currentStageIndex++;
 	}
 	let generes = ["معمایی","مهیج"];
 	let ageRatings = ["+3", "+7", "+12", "+15", "+18"];
@@ -10,7 +25,14 @@
 	let choosenAgeRating;
 </script>
 <div class="hero">
-	{#if inputsVisible}
+	{#if currentStage == stages.landing}
+		<div class="text">
+			<h1 class="title">دنبال فیلم می گردی؟</h1>
+			<h2 class="subtitle">برات پیدا می کنیم</h2>
+			<button class="btn" on:click={handleClick}>نشونم بده</button>
+		</div>
+	{/if}
+	{#if currentStage == stages.generes}
 		<div class="input">
 			<div class="input-group">
 				<h3 class="label">چه ژانری دوست داری؟</h3>
@@ -20,23 +42,20 @@
 					{/each}
 				</select>
 			</div>
-			<div class="input-group">
-				<h3 class="label">رده ی سنی</h3>
-				<div class="buttons">
-					{#each ageRatings as ageRating}
-						<button on:click={() => choosenAgeRating = ageRating}>{ageRating}</button>
-					{/each}
-				</div>
+			<button on:click={() => currentStageIndex++} class="btn">بعدی</button>
+		</div>
+		{/if}
+		{#if currentStage == stages.oldOrNew}
+			<AreaChoice min={1980} max={new Date().getFullYear()}></AreaChoice>
+			<!-- <TwoOptionChoice first="قدیمی" second="جدید"></TwoOptionChoice> -->
+		{/if}
+		<!-- {#if currentStage == stages.domesticOrForeign}
+			<h1 class="domestic-or-foreign">طرفدار فیلم خارحی هستی یا ایرانی؟</h1>
+			<div class="buttons">
+				<button>ایرانی</button>
+				<button>خارجی</button>
 			</div>
-			<button class="btn" on:click={() => console.log({genere:generes[choosenGenereIndex], ageRating: choosenAgeRating})}>یه فیلم پیدا کن</button>
-		</div>
-	{:else}
-		<div class="text">
-			<h1 class="title">دنبال فیلم می گردی؟</h1>
-			<h2 class="subtitle">برات پیدا می کنیم</h2>
-			<button class="btn" on:click={handleClick}>نشونم بده</button>
-		</div>
-	{/if}
+		{/if} -->
 </div>
 <style>
 	@font-face {
@@ -110,4 +129,8 @@
 
 		font-size: 20px;
 	}
+	/* .domestic-or-foreign > .buttons {
+		display: flex;
+		align-items: space-between;
+	} */
 </style>
