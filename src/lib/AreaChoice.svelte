@@ -97,18 +97,19 @@
 		background-color: blue;
 	}
 	.inputs {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
+		display: grid;
+		gap: 15px;
 
-		margin: 15px 0;
+		grid-template-columns: 1fr 1fr;
+
+		margin-bottom: 15px;
 	}
 	.inputs input{
-		width: 6ch;
+		box-sizing: border-box;
+
+		width: 100%;
 
 		padding: 0 10px;
-
-		margin-right: 10px;
 
 		border: 1px solid hsl(0deg 0% 70%);
 		border-radius: 10px;

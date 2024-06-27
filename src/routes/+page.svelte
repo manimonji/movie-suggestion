@@ -1,28 +1,27 @@
 <script>
     import AreaChoice from "../lib/AreaChoice.svelte";
-import TwoOptionChoice from "../lib/TwoOptionChoice.svelte";
+	import TwoOptionChoice from "../lib/TwoOptionChoice.svelte";
 
 	const stages = {
 		landing: 'landing',
-		generes: 'generes',
-		oldOrNew: 'old-or-new',
-		domesticOrForeign: 'domestic-or-foreign',
+		inputs: 'inputs',
+		favoriteMovies: 'favoriteMovies'
 	}
-	const stagesList = [stages.landing, stages.generes, stages.oldOrNew, stages.domesticOrForeign]
+	const stagesList = [stages.landing, stages.inputs]
 	let currentStageIndex = 0;
 	$: if(currentStageIndex >= stagesList.length) {
 		currentStageIndex = 0;
 	}
 	$: currentStage = stagesList[currentStageIndex]
-	let inputsVisible = false;
+	// let inputsVisible = false;
 	function handleClick(e) {
 		currentStageIndex++;
 	}
-	let generes = ["معمایی","مهیج"];
-	let ageRatings = ["+3", "+7", "+12", "+15", "+18"];
-	let choosenGenereIndex = 0;
-	// $: choosenGenere = generes[choosenGenereIndex];
-	let choosenAgeRating;
+	// let generes = ["معمایی","مهیج"];
+	// let ageRatings = ["+3", "+7", "+12", "+15", "+18"];
+	// let choosenGenereIndex = 0;
+	// // $: choosenGenere = generes[choosenGenereIndex];
+	// let choosenAgeRating;
 </script>
 <div class="hero">
 	{#if currentStage == stages.landing}
@@ -31,9 +30,12 @@ import TwoOptionChoice from "../lib/TwoOptionChoice.svelte";
 			<h2 class="subtitle">برات پیدا می کنیم</h2>
 			<button class="btn" on:click={handleClick}>نشونم بده</button>
 		</div>
-	{/if}
-	{#if currentStage == stages.generes}
-		<div class="input">
+	{:else if currentStage == stages.inputs}
+		<div class="inputs">		
+			<AreaChoice min={1980} max={new Date().getFullYear()} class="date"></AreaChoice>
+			<AreaChoice min={20} max={80} class="movie-length"></AreaChoice>
+		</div>
+		<!-- <div class="input">
 			<div class="input-group">
 				<h3 class="label">چه ژانری دوست داری؟</h3>
 				<select name="" id="" class="genere" bind:value={choosenGenereIndex}>
@@ -43,12 +45,11 @@ import TwoOptionChoice from "../lib/TwoOptionChoice.svelte";
 				</select>
 			</div>
 			<button on:click={() => currentStageIndex++} class="btn">بعدی</button>
-		</div>
-		{/if}
-		{#if currentStage == stages.oldOrNew}
-			<AreaChoice min={1980} max={new Date().getFullYear()}></AreaChoice>
+		</div> -->
+		<!-- {/if}
+		{#if currentStage == stages.oldOrNew} -->
 			<!-- <TwoOptionChoice first="قدیمی" second="جدید"></TwoOptionChoice> -->
-		{/if}
+	{/if}
 		<!-- {#if currentStage == stages.domesticOrForeign}
 			<h1 class="domestic-or-foreign">طرفدار فیلم خارحی هستی یا ایرانی؟</h1>
 			<div class="buttons">
@@ -62,6 +63,9 @@ import TwoOptionChoice from "../lib/TwoOptionChoice.svelte";
 		font-family: sahel;
 		src: url("$lib/fonts/sahel.woff2");
 	}
+	:global(body) {
+		margin: 0;
+	}
 	:global(*){
 		font-family: Sahel;
 	}
@@ -72,7 +76,7 @@ import TwoOptionChoice from "../lib/TwoOptionChoice.svelte";
 
 		height: 100vh;
 	}
-	.hero .text, .hero .input {
+	.hero .text {
 		text-align: center;
 	}
 	.hero .text .title {
@@ -84,7 +88,21 @@ import TwoOptionChoice from "../lib/TwoOptionChoice.svelte";
 		font-size: 28px;
 		font-weight: 300;
 	}
-	.hero .input .input-group {
+	.inputs {
+		box-sizing: border-box;
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		gap: 30px;
+
+		height: 100vh;
+
+		padding: 20px;
+	}
+	.inputs .movie-length {
+		grid-row: 2 / 3;
+		grid-column: 1 / 2;
+	}
+	/* .hero .input .input-group {
 		margin: 0 0 30px 0;
 	}
 	.hero .input .genere {
@@ -101,8 +119,8 @@ import TwoOptionChoice from "../lib/TwoOptionChoice.svelte";
 
 		font-size: 20px;
 
-		-moz-appearance:none; /* Firefox */
-		-webkit-appearance:none; /* Safari and Chrome */
+		-moz-appearance:none; 
+		-webkit-appearance:none; 
 		appearance:none;
 	}
 	.hero .input .genere::after {
@@ -117,7 +135,7 @@ import TwoOptionChoice from "../lib/TwoOptionChoice.svelte";
 
 		font-size: 28px;
 		font-weight: 400;
-	}
+	} */
 	.btn {
 		color: #fff;
 		background-color: hsl(220deg 100% 40%);
