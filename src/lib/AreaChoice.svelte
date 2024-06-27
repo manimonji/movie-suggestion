@@ -1,16 +1,39 @@
 <script>
-    import SliderCircle from "./SliderCircle.svelte";
+    import { writable } from "svelte/store";
+	import SliderCircle from "./SliderCircle.svelte";
+
+	Number.prototype.clamp = function(min, max) {
+		  return Math.min(Math.max(this, min), max);
+	};
+	function createMinMax({ min, max }) {
+		let { subscribe, set, update } = writable({ min, max });
+		return {
+			subscribe,
+			setMin: (v) => update((obj) => ({min: v.clamp(min, obj.max), max: obj.max})),
+			setMax: (v) => update((obj) => ({min: obj.min, max: v.clamp(obj.min, max)})),
+		}
+	}
 	let container;
 	export let min;
 	export let max;
+	let minMax = createMinMax({ min, max });
 	let nums = [min, max];
-	$: nums = [clamp(min, nums[0], max), clamp(min, nums[1], max)];
-	let reversed = false;
+	$: {
+		let oldNums = [...nums];
+		let num1 = oldNums[0].clamp(min, oldNums[1]);
+		let num2 = oldNums[1].clamp(oldNums[0], max);
+		console.log(num1, num2);
+		nums = [num1, num2];
+	}
+	// $: if (changedCircle == 'min' && nums[0] > nums[1]) {
+	// 	nums[0] = nums[1];
+	// }
+	// $: if (changedCircle == 'max' && nums[0] > nums[1]) {
+	// 	nums[1] = nums[0];
+	// }
+	// let reversed = false;
 	$: numsSorted = [...nums].sort((a,b) => a - b)
 	$: length = max - min;
-	function clamp(min, num, max) {
-		return num < min ? min : num > max ? max : num
-	}
 	function getPosition(min, num, length) {
 		return (num - min) / length * 100
 	}
@@ -18,29 +41,38 @@
 		return rect.x + rect.width - x
 	}
 	function getNewNumber(start ,newPosition, rect) {
-		let newNumber = start + Math.round(leftToRightX(newPosition, rect) / rect.width * length);
-		return newNumber
+		return start + Math.round(leftToRightX(newPosition, rect) / rect.width * length)
 	}
 	function handleSlide1(e) {
-		nums[0] = getNewNumber(min, e.detail.newPosition, container.getBoundingClientRect());
+		let newNumber = getNewNumber(min, e.detail.newPosition, container.getBoundingClientRect());
+		minMax.setMin(newNumber);
 	}
 	function handleSlide2(e) {
-		nums[1] = getNewNumber(min, e.detail.newPosition, container.getBoundingClientRect());
+		let newNumber = getNewNumber(min, e.detail.newPosition, container.getBoundingClientRect());
+		minMax.setMax(newNumber);
 	}
+	// function handleMinInputChange(e) {
+	// 	newNumber = parseInt(e.target.value);
+	// 	nums[0] = newNumber > nums[1] ? nums[1] : newNumber;
+	// }
+	// function handleMaxInputChange(e) {
+	// 	newNumber = parseInt(e.target.value);
+	// 	nums[1] = newNumber < nums[0] ? nums[0] : newNumber;
+	// }
 </script>
 <div class="container" bind:this={container}>
 	<div class="inputs">
 			<div>
-				از سال<input min={min} max={max} step="1" type="number" bind:value={nums[0]}>
+				از سال<input min={min} max={max} step="1" type="number" on:change={(e) => minMax.setMin(parseInt(e.target.value))} bind:value={$minMax.min}>
 			</div>
 			<div>
-				تا سال<input min={min} max={max} step="1" type="number" bind:value={nums[1]}>
+				تا سال<input min={min} max={max} step="1" type="number" on:change={(e) => minMax.setMax(parseInt(e.target.value))} bind:value={$minMax.max}>
 			</div>
 	</div>
 	<div class="slider-container">
-		<SliderCircle right={getPosition(min, nums[0], length)} on:slide={handleSlide1}></SliderCircle>
-		<div class="choosen" style={`right: ${getPosition(min, numsSorted[0], length)}%; width: ${getPosition(min, numsSorted[1], length) - getPosition(min, numsSorted[0], length)}%;`}></div>
-		<SliderCircle right={getPosition(min, nums[1], length)} on:slide={handleSlide2}></SliderCircle>
+		<SliderCircle right={getPosition(min, $minMax.min, length)} on:slide={handleSlide1}></SliderCircle>
+		<div class="choosen" style={`right: ${getPosition(min, $minMax.min, length)}%; width: ${getPosition(min, $minMax.max, length) - getPosition(min, $minMax.min, length)}%;`}></div>
+		<SliderCircle right={getPosition(min, $minMax.max, length)} on:slide={handleSlide2}></SliderCircle>
 	</div>
 </div>
 <style>
