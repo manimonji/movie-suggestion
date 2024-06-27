@@ -63,10 +63,10 @@
 <div class="container" bind:this={container}>
 	<div class="inputs">
 			<div>
-				از سال<input min={min} max={max} step="1" type="number" on:change={(e) => minMax.setMin(parseInt(e.target.value))} bind:value={$minMax.min}>
+				از سال<input min={min} max={max} step="1" on:change={(e) => minMax.setMin(parseInt(e.target.value))} bind:value={$minMax.min}>
 			</div>
 			<div>
-				تا سال<input min={min} max={max} step="1" type="number" on:change={(e) => minMax.setMax(parseInt(e.target.value))} bind:value={$minMax.max}>
+				تا سال<input min={min} max={max} step="1" on:change={(e) => minMax.setMax(parseInt(e.target.value))} bind:value={$minMax.max}>
 			</div>
 	</div>
 	<div class="slider-container">
