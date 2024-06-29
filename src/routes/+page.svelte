@@ -1,6 +1,9 @@
 <script>
-    import AreaChoice from "../lib/AreaChoice.svelte";
-	import TwoOptionChoice from "../lib/TwoOptionChoice.svelte";
+    import AreaChoice from "$lib/AreaChoice.svelte";
+	import TwoOptionChoice from "$lib/TwoOptionChoice.svelte";
+
+	import oldVideo from "$lib/videos/charlie.mp4"
+	import oldTitle from "$lib/images/old-title.svg"
 
 	const stages = {
 		landing: 'landing',
@@ -23,41 +26,53 @@
 	// // $: choosenGenere = generes[choosenGenereIndex];
 	// let choosenAgeRating;
 </script>
-<div class="hero">
-	{#if currentStage == stages.landing}
+{#if currentStage == stages.landing}
+	<div class="hero">
 		<div class="text">
 			<h1 class="title">دنبال فیلم می گردی؟</h1>
 			<h2 class="subtitle">برات پیدا می کنیم</h2>
 			<button class="btn" on:click={handleClick}>نشونم بده</button>
 		</div>
-	{:else if currentStage == stages.inputs}
-		<div class="inputs">		
-			<AreaChoice min={1980} max={new Date().getFullYear()} class="date"></AreaChoice>
-			<AreaChoice min={20} max={80} class="movie-length"></AreaChoice>
+	</div>
+{:else if currentStage == stages.inputs}
+	<div class="inputs">
+		<div class="likes-old-movies">
+			<img class="image-title" src={oldTitle} alt="Do you like old movies?">
+			<!-- <h1 class="title">قدیمی پسندی؟</h1> -->
+			<video class="video" src={oldVideo} autoplay muted loop>
+				<track kind="captions">
+			</video>
 		</div>
-		<!-- <div class="input">
-			<div class="input-group">
-				<h3 class="label">چه ژانری دوست داری؟</h3>
-				<select name="" id="" class="genere" bind:value={choosenGenereIndex}>
-					{#each generes as genere, i}
-					<option value={i}>{genere}</option>
-					{/each}
-				</select>
-			</div>
-			<button on:click={() => currentStageIndex++} class="btn">بعدی</button>
-		</div> -->
-		<!-- {/if}
-		{#if currentStage == stages.oldOrNew} -->
-			<!-- <TwoOptionChoice first="قدیمی" second="جدید"></TwoOptionChoice> -->
-	{/if}
-		<!-- {#if currentStage == stages.domesticOrForeign}
-			<h1 class="domestic-or-foreign">طرفدار فیلم خارحی هستی یا ایرانی؟</h1>
-			<div class="buttons">
-				<button>ایرانی</button>
-				<button>خارجی</button>
-			</div>
-		{/if} -->
-</div>
+		<div class="favourite-director"></div>
+		<div class="date">
+			<AreaChoice min={1980} max={new Date().getFullYear()}></AreaChoice>
+		</div>
+		<div class="movie-length">
+			<AreaChoice min={20} max={80}></AreaChoice>
+		</div>
+	</div>
+	<!-- <div class="input">
+		<div class="input-group">
+			<h3 class="label">چه ژانری دوست داری؟</h3>
+			<select name="" id="" class="genere" bind:value={choosenGenereIndex}>
+				{#each generes as genere, i}
+				<option value={i}>{genere}</option>
+				{/each}
+			</select>
+		</div>
+		<button on:click={() => currentStageIndex++} class="btn">بعدی</button>
+	</div> -->
+	<!-- {/if}
+	{#if currentStage == stages.oldOrNew} -->
+		<!-- <TwoOptionChoice first="قدیمی" second="جدید"></TwoOptionChoice> -->
+{/if}
+	<!-- {#if currentStage == stages.domesticOrForeign}
+		<h1 class="domestic-or-foreign">طرفدار فیلم خارحی هستی یا ایرانی؟</h1>
+		<div class="buttons">
+			<button>ایرانی</button>
+			<button>خارجی</button>
+		</div>
+	{/if} -->
 <style>
 	@font-face {
 		font-family: sahel;
@@ -96,11 +111,56 @@
 
 		height: 100vh;
 
-		padding: 20px;
+		padding: 30px;
 	}
-	.inputs .movie-length {
-		grid-row: 2 / 3;
+	.inputs .favourite-director {
+		grid-row: 1 / 3;
+		grid-column: 2 / 3;
+		background-color: #000;
+	}
+	.inputs .likes-old-movies {
+		box-sizing: border-box;
+		padding: 28px;
+
+		position: relative;
+
+		grid-row: 1 / 3;
 		grid-column: 1 / 2;
+
+		overflow: clip;
+	}
+	.inputs .likes-old-movies .image-title {
+		width: 100%;
+
+		position: relative;
+
+		z-index: 1;
+	}
+	.inputs .likes-old-movies .title {
+		margin: 0;
+
+		line-height: 1.1;
+		font-size: 84px;
+
+		padding-bottom: 0.1em;
+
+		position: relative;
+
+		color: #fff;
+		
+		-moz-mask-image: url("$lib/images/type-dark.png");
+		-webkit-mask-image: url("$lib/images/type-dark.png");
+		mask-image: url("$lib/images/type-dark.png");
+		
+		z-index: 1;
+	}
+	.inputs .likes-old-movies .video {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		height: 100%;
+
+		transform: translate(-50%, -50%);
 	}
 	/* .hero .input .input-group {
 		margin: 0 0 30px 0;
