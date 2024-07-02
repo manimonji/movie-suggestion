@@ -20,6 +20,7 @@
 	function handleClick(e) {
 		currentStageIndex++;
 	}
+	let likesOldMovies = '';
 	// let generes = ["معمایی","مهیج"];
 	// let ageRatings = ["+3", "+7", "+12", "+15", "+18"];
 	// let choosenGenereIndex = 0;
@@ -42,6 +43,10 @@
 			<video class="video" src={oldVideo} autoplay muted loop>
 				<track kind="captions">
 			</video>
+			<div class="buttons">
+				<button on:click={() => likesOldMovies = true} class:active={likesOldMovies}>آره</button>
+				<button on:click={() => likesOldMovies = false} class:active={!likesOldMovies}>نه</button>
+			</div>
 		</div>
 		<div class="favourite-director"></div>
 		<div class="date">
@@ -128,6 +133,8 @@
 		grid-column: 1 / 2;
 
 		overflow: clip;
+		
+		background: linear-gradient(0deg, #000, transparent);
 	}
 	.inputs .likes-old-movies .image-title {
 		width: 100%;
@@ -135,6 +142,33 @@
 		position: relative;
 
 		z-index: 1;
+	}
+	.inputs .likes-old-movies .buttons {
+		width: 100%;
+		display: flex;
+		gap: 25px;
+	}
+	.inputs .likes-old-movies .buttons button {
+		flex-grow: 1;
+
+		padding: 25px 0;
+
+		color: #fff;
+		background-color: transparent;
+
+		border: solid 3px currentColor;
+
+		font-size: 28px;
+		font-weight: 500;
+
+		transition: background-color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+	}
+	.inputs .likes-old-movies .buttons button:hover {
+		background-color: hsla(0deg, 100%, 100%, 0.25);
+	}
+	.inputs .likes-old-movies .buttons button.active {
+		color: #1c0302;
+		background-color: #d48817;
 	}
 	.inputs .likes-old-movies .title {
 		margin: 0;
@@ -151,8 +185,6 @@
 		-moz-mask-image: url("$lib/images/type-dark.png");
 		-webkit-mask-image: url("$lib/images/type-dark.png");
 		mask-image: url("$lib/images/type-dark.png");
-		
-		z-index: 1;
 	}
 	.inputs .likes-old-movies .video {
 		position: absolute;
@@ -161,6 +193,8 @@
 		height: 100%;
 
 		transform: translate(-50%, -50%);
+
+		z-index: -1;
 	}
 	/* .hero .input .input-group {
 		margin: 0 0 30px 0;
