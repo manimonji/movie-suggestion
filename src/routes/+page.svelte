@@ -48,7 +48,9 @@
 				<button on:click={() => likesOldMovies = false} class:active={!likesOldMovies}>نه</button>
 			</div>
 		</div>
-		<div class="favourite-director"></div>
+		<section class="favourite-director">
+			<h1 class="title">کارگردان مورد علاقه ات کیه؟</h1>
+		</section>
 		<div class="date">
 			<AreaChoice min={1980} max={new Date().getFullYear()}></AreaChoice>
 		</div>
@@ -117,11 +119,6 @@
 		height: 100vh;
 
 		padding: 30px;
-	}
-	.inputs .favourite-director {
-		grid-row: 1 / 3;
-		grid-column: 2 / 3;
-		background-color: #000;
 	}
 	.inputs .likes-old-movies {
 		box-sizing: border-box;
@@ -195,6 +192,11 @@
 		transform: translate(-50%, -50%);
 
 		z-index: -1;
+	}
+	.inputs .favourite-director {
+		grid-row: 1 / 3;
+		grid-column: 2 / 3;
+		background-color: #000;
 	}
 	/* .hero .input .input-group {
 		margin: 0 0 30px 0;
