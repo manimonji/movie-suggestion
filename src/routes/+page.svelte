@@ -60,10 +60,10 @@
 			<button class="btn next">بعدی</button>
 		</section>
 		<section class="favourite-director">
-			<h1 class="title">کارگردان مورد علاقه ات کیه؟</h1>
-			<input type="text" class="search-box">
+			<h1 class="title" >کارگردان مورد علاقه ات کیه؟</h1>
+			<input type="text" class="search-box" placeholder="کریستوفر نولان">
 			<section class="results">
-				<p>نتایج</p>
+				<p class="hint">نتایج میان اینجا</p>
 			</section>
 		</section>
 	</div>
@@ -204,6 +204,8 @@
 	.inputs .favourite-director {
 		box-sizing: border-box;
 		grid-row: 1 / 3;
+		display: flex;
+		flex-direction: column;
 
 		padding: 32px;
 
@@ -232,10 +234,33 @@
 		border-radius: 15px;
 
 		font-size: 20px;
+
+		z-index: 1;
 	}
 	.inputs .favourite-director .search-box:focus {
 		border-color: hsl(220deg 100% 60%);
 		outline: none;
+	}
+	.inputs .favourite-director .results {
+		flex-grow: 1;
+
+		padding-top: 15px;
+
+		position: relative;
+		top: -15px;
+
+		background-color: hsl(0deg 0% 5%);
+
+		border-radius: 0 0 15px 15px;
+	}
+	.inputs .favourite-director .results .hint {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+
+		color: #fff;
+
+		transform: translate(-50%, -50%);
 	}
 	.inputs .date-and-length {
 		box-sizing: border-box;
