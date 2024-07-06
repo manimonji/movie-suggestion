@@ -1,6 +1,7 @@
 <script>
     import { writable } from "svelte/store";
 	import SliderCircle from "./SliderCircle.svelte";
+    import { createEventDispatcher } from "svelte";
 
 	Number.prototype.clamp = function(min, max) {
 		  return Math.min(Math.max(this, min), max);
@@ -53,14 +54,8 @@
 		let newNumber = getNewNumber(min, e.detail.newPosition, container.getBoundingClientRect());
 		minMax.setMax(newNumber);
 	}
-	// function handleMinInputChange(e) {
-	// 	newNumber = parseInt(e.target.value);
-	// 	nums[0] = newNumber > nums[1] ? nums[1] : newNumber;
-	// }
-	// function handleMaxInputChange(e) {
-	// 	newNumber = parseInt(e.target.value);
-	// 	nums[1] = newNumber < nums[0] ? nums[0] : newNumber;
-	// }
+	const dispatch = createEventDispatcher();
+	$: dispatch('change', $minMax) 
 </script>
 <div class="container" bind:this={container}>
 	{#if mode == "labled"}

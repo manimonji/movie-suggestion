@@ -4,6 +4,7 @@
 
 	import oldVideo from "$lib/videos/charlie.mp4"
 	import oldTitle from "$lib/images/old-title.svg"
+    import { fade } from "svelte/transition";
 
 	const stages = {
 		landing: 'landing',
@@ -21,11 +22,38 @@
 		currentStageIndex++;
 	}
 	let likesOldMovies = '';
+	let dateArea = {min: 1980, max: 2024};
+	let lengthArea = {min: 20, max: 80};
 	// let generes = ["معمایی","مهیج"];
 	// let ageRatings = ["+3", "+7", "+12", "+15", "+18"];
 	// let choosenGenereIndex = 0;
 	// // $: choosenGenere = generes[choosenGenereIndex];
 	// let choosenAgeRating;
+	let choice = '';
+	let query = '';
+	function fakeFetch(query) {
+		return new Promise((resolve, reject) => {
+			setTimeout(() => {
+				resolve(new Response(JSON.stringify(
+					[
+						"Cristopher Nolan",
+						"My brother",
+						"Bodhi Linux",
+						"Bodhi Linux",
+						"Bodhi Linux",
+						"Bodhi Linux",
+						"Bodhi Linux",
+						"Bodhi Linux",
+						"Bodhi Linux",
+						"Bodhi Linux",
+						"Bodhi Linux",
+					]
+				)));
+			}, 200)
+		})
+	}
+	$: results = fakeFetch(query).then(response => response.json());
+	console.log(results);
 </script>
 {#if currentStage == stages.landing}
 	<div class="hero">
@@ -37,7 +65,7 @@
 	</div>
 {:else if currentStage == stages.inputs}
 	<div class="inputs">
-		<div class="likes-old-movies">
+		<section class="likes-old-movies section">
 			<img class="image-title" src={oldTitle} alt="Do you like old movies?">
 			<!-- <h1 class="title">قدیمی پسندی؟</h1> -->
 			<video class="video" src={oldVideo} autoplay muted loop>
@@ -47,48 +75,43 @@
 				<button on:click={() => likesOldMovies = true} class:active={likesOldMovies}>آره</button>
 				<button on:click={() => likesOldMovies = false} class:active={!likesOldMovies}>نه</button>
 			</div>
-		</div>
-		<section class="date-and-length">
+		</section>
+		<section class="date-and-length section">
 			<div class="date">
 				<h2 class="title">تاریخ انتشار</h2>
-				<AreaChoice min={1980} max={new Date().getFullYear()} unit="سال" mode="labled"></AreaChoice>
+				<AreaChoice min={1980} max={new Date().getFullYear()} unit="سال" mode="labled" on:change={(e) => dateArea = e.detail}></AreaChoice>
 			</div>
 			<div class="movie-length">
 				<h2 class="title">طول فیلم</h2>
-				<AreaChoice min={20} max={80} unit="دقیقه" mode="linear"></AreaChoice>
+				<AreaChoice min={20} max={80} unit="دقیقه" mode="linear" on:change={(e) => lengthArea = e.detail}></AreaChoice>
 			</div>
 			<button class="btn next">بعدی</button>
 		</section>
-		<section class="favourite-director">
+		<section class="favourite-director section">
 			<h1 class="title" >کارگردان مورد علاقه ات کیه؟</h1>
-			<input type="text" class="search-box" placeholder="کریستوفر نولان">
+			<p class="choice">
+				{#if choice == ''}
+					انتخاب کن!
+				{:else}
+					{choice}
+				{/if}
+			</p>
+			<input type="text" class="search-box" placeholder="Cristopher Nolan" bind:value={query}>
 			<section class="results">
-				<p class="hint">نتایج میان اینجا</p>
+				{#await results}
+					<span class="loader" in:fade></span>
+				{:then results} 
+					{#each results as result }
+						<button class="result" on:click={() => choice = result}>{result}</button>
+					{/each}
+				{/await}
+				{#if query = ''}
+					<p class="hint">نتایج میان اینجا</p>
+				{/if}
 			</section>
 		</section>
 	</div>
-	<!-- <div class="input">
-		<div class="input-group">
-			<h3 class="label">چه ژانری دوست داری؟</h3>
-			<select name="" id="" class="genere" bind:value={choosenGenereIndex}>
-				{#each generes as genere, i}
-				<option value={i}>{genere}</option>
-				{/each}
-			</select>
-		</div>
-		<button on:click={() => currentStageIndex++} class="btn">بعدی</button>
-	</div> -->
-	<!-- {/if}
-	{#if currentStage == stages.oldOrNew} -->
-		<!-- <TwoOptionChoice first="قدیمی" second="جدید"></TwoOptionChoice> -->
 {/if}
-	<!-- {#if currentStage == stages.domesticOrForeign}
-		<h1 class="domestic-or-foreign">طرفدار فیلم خارحی هستی یا ایرانی؟</h1>
-		<div class="buttons">
-			<button>ایرانی</button>
-			<button>خارجی</button>
-		</div>
-	{/if} -->
 <style>
 	@font-face {
 		font-family: sahel;
@@ -126,8 +149,12 @@
 		/* gap: 30px; */
 
 		height: 100vh;
+		max-height: 100vh;
 
 		/* padding: 30px; */
+	}
+	.inputs .section {
+		max-height: 100vh;
 	}
 	.inputs .likes-old-movies {
 		box-sizing: border-box;
@@ -219,13 +246,18 @@
 		font-size: 64px;
 		line-height: 1.2;
 	}
+	.inputs .favourite-director .choice {
+		color: #fff;
+		text-align: center;
+
+		font-size: 20px;
+	}
 	.inputs .favourite-director .search-box {
 		box-sizing: border-box;
 
 		width: 100%;
 
 		padding: 16px;
-		margin-top: 32px;
 
 		color: #fff;
 		background-color: hsl(0deg 0% 20%);
@@ -235,6 +267,8 @@
 
 		font-size: 20px;
 
+		text-align: left;
+
 		z-index: 1;
 	}
 	.inputs .favourite-director .search-box:focus {
@@ -243,8 +277,17 @@
 	}
 	.inputs .favourite-director .results {
 		flex-grow: 1;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 16px;
 
-		padding-top: 15px;
+		max-height: fit-content;
+
+		overflow-y: scroll;
+
+		--padding: 16px;
+		padding: calc(15px + var(--padding)) var(--padding) var(--padding) var(--padding);
 
 		position: relative;
 		top: -15px;
@@ -253,7 +296,16 @@
 
 		border-radius: 0 0 15px 15px;
 	}
+	.inputs .favourite-director .results .loader {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
 	.inputs .favourite-director .results .hint {
+		box-sizing: border-box;
+		padding: 16px;
+
 		position: absolute;
 		top: 50%;
 		left: 50%;
@@ -261,6 +313,21 @@
 		color: #fff;
 
 		transform: translate(-50%, -50%);
+	}
+	.inputs .favourite-director .results .result {
+		padding: 16px;
+
+		color: #fff;
+
+		text-align: left;
+		
+		background-color: hsl(0deg 0% 10%);
+
+		border: none;
+		border-radius: 5px;
+	}
+	.inputs .favourite-director .results .result:hover {
+		background-color: hsl(0deg 0% 15%);
 	}
 	.inputs .date-and-length {
 		box-sizing: border-box;
@@ -323,4 +390,63 @@
 		display: flex;
 		align-items: space-between;
 	} */
+	.loader {
+		color: #fff;
+		font-size: 10px;
+		width: 1em;
+		height: 1em;
+		border-radius: 50%;
+		position: relative;
+		text-indent: -9999em;
+		animation: mulShdSpin 1.3s infinite linear;
+		transform: translateZ(0);
+	}
+	@keyframes mulShdSpin {
+		0%,
+		100% {
+			box-shadow: 0 -3em 0 0.2em, 
+			2em -2em 0 0em, 3em 0 0 -1em, 
+			2em 2em 0 -1em, 0 3em 0 -1em, 
+			-2em 2em 0 -1em, -3em 0 0 -1em, 
+			-2em -2em 0 0;
+		}
+		12.5% {
+			box-shadow: 0 -3em 0 0, 2em -2em 0 0.2em, 
+			3em 0 0 0, 2em 2em 0 -1em, 0 3em 0 -1em, 
+			-2em 2em 0 -1em, -3em 0 0 -1em, 
+			-2em -2em 0 -1em;
+		}
+		25% {
+			box-shadow: 0 -3em 0 -0.5em, 
+			2em -2em 0 0, 3em 0 0 0.2em, 
+			2em 2em 0 0, 0 3em 0 -1em, 
+			-2em 2em 0 -1em, -3em 0 0 -1em, 
+			-2em -2em 0 -1em;
+		}
+		37.5% {
+			box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
+			3em 0em 0 0, 2em 2em 0 0.2em, 0 3em 0 0em, 
+			-2em 2em 0 -1em, -3em 0em 0 -1em, -2em -2em 0 -1em;
+		}
+		50% {
+			box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
+			3em 0 0 -1em, 2em 2em 0 0em, 0 3em 0 0.2em, 
+			-2em 2em 0 0, -3em 0em 0 -1em, -2em -2em 0 -1em;
+		}
+		62.5% {
+			box-shadow: 0 -3em 0 -1em, 2em -2em 0 -1em,
+			3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 0, 
+			-2em 2em 0 0.2em, -3em 0 0 0, -2em -2em 0 -1em;
+		}
+		75% {
+			box-shadow: 0em -3em 0 -1em, 2em -2em 0 -1em, 
+			3em 0em 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, 
+			-2em 2em 0 0, -3em 0em 0 0.2em, -2em -2em 0 0;
+		}
+		87.5% {
+			box-shadow: 0em -3em 0 0, 2em -2em 0 -1em, 
+			3em 0 0 -1em, 2em 2em 0 -1em, 0 3em 0 -1em, 
+			-2em 2em 0 0, -3em 0em 0 0, -2em -2em 0 0.2em;
+		}
+	}
 </style>
