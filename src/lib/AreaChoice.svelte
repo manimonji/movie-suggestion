@@ -14,8 +14,10 @@
 		}
 	}
 	let container;
+	export let unit;
 	export let min;
 	export let max;
+	export let mode;
 	let minMax = createMinMax({ min, max });
 	let nums = [min, max];
 	$: {
@@ -61,14 +63,22 @@
 	// }
 </script>
 <div class="container" bind:this={container}>
-	<div class="inputs">
-			<div>
-				از سال<input min={min} max={max} step="1" on:change={(e) => minMax.setMin(parseInt(e.target.value))} bind:value={$minMax.min}>
-			</div>
-			<div>
-				تا سال<input min={min} max={max} step="1" on:change={(e) => minMax.setMax(parseInt(e.target.value))} bind:value={$minMax.max}>
-			</div>
-	</div>
+	{#if mode == "labled"}
+		<div class="inputs labled">
+				<div>
+					از {unit}<input min={min} max={max} step="1" on:change={(e) => minMax.setMin(parseInt(e.target.value))} bind:value={$minMax.min}>
+				</div>
+				<div>
+					تا {unit}<input min={min} max={max} step="1" on:change={(e) => minMax.setMax(parseInt(e.target.value))} bind:value={$minMax.max}>
+				</div>
+		</div>
+	{:else if mode == "linear"}
+		<div class="inputs linear">
+			از <input min={min} max={max} step="1" on:change={(e) => minMax.setMin(parseInt(e.target.value))} bind:value={$minMax.min}>
+			تا <input min={min} max={max} step="1" on:change={(e) => minMax.setMax(parseInt(e.target.value))} bind:value={$minMax.max}>
+			{unit}
+		</div>
+	{/if}
 	<div class="slider-container">
 		<SliderCircle right={getPosition(min, $minMax.min, length)} on:slide={handleSlide1}></SliderCircle>
 		<div class="choosen" style={`right: ${getPosition(min, $minMax.min, length)}%; width: ${getPosition(min, $minMax.max, length) - getPosition(min, $minMax.min, length)}%;`}></div>
@@ -97,19 +107,28 @@
 		background-color: blue;
 	}
 	.inputs {
+		margin-bottom: 15px;
+	}
+	.inputs.labled {
 		display: grid;
 		gap: 15px;
 
 		grid-template-columns: 1fr 1fr;
 
-		margin-bottom: 15px;
+	}
+	.inputs.linear {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+
+		font-size: 20px;
 	}
 	.inputs input{
 		box-sizing: border-box;
 
-		width: 100%;
-
 		padding: 0 10px;
+
+		width: 100%;
 
 		border: 1px solid hsl(0deg 0% 70%);
 		border-radius: 10px;

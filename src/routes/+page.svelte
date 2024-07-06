@@ -48,15 +48,24 @@
 				<button on:click={() => likesOldMovies = false} class:active={!likesOldMovies}>نه</button>
 			</div>
 		</div>
+		<section class="date-and-length">
+			<div class="date">
+				<h2 class="title">تاریخ انتشار</h2>
+				<AreaChoice min={1980} max={new Date().getFullYear()} unit="سال" mode="labled"></AreaChoice>
+			</div>
+			<div class="movie-length">
+				<h2 class="title">طول فیلم</h2>
+				<AreaChoice min={20} max={80} unit="دقیقه" mode="linear"></AreaChoice>
+			</div>
+			<button class="btn next">بعدی</button>
+		</section>
 		<section class="favourite-director">
 			<h1 class="title">کارگردان مورد علاقه ات کیه؟</h1>
+			<input type="text" class="search-box">
+			<section class="results">
+				<p>نتایج</p>
+			</section>
 		</section>
-		<div class="date">
-			<AreaChoice min={1980} max={new Date().getFullYear()}></AreaChoice>
-		</div>
-		<div class="movie-length">
-			<AreaChoice min={20} max={80}></AreaChoice>
-		</div>
 	</div>
 	<!-- <div class="input">
 		<div class="input-group">
@@ -114,11 +123,11 @@
 		box-sizing: border-box;
 		display: grid;
 		grid-template-columns: 1fr 1fr 1fr;
-		gap: 30px;
+		/* gap: 30px; */
 
 		height: 100vh;
 
-		padding: 30px;
+		/* padding: 30px; */
 	}
 	.inputs .likes-old-movies {
 		box-sizing: border-box;
@@ -127,7 +136,6 @@
 		position: relative;
 
 		grid-row: 1 / 3;
-		grid-column: 1 / 2;
 
 		overflow: clip;
 		
@@ -185,7 +193,7 @@
 	}
 	.inputs .likes-old-movies .video {
 		position: absolute;
-		top: 50%;
+		top: calc(50% - 1px);
 		left: 50%;
 		height: 100%;
 
@@ -194,9 +202,52 @@
 		z-index: -1;
 	}
 	.inputs .favourite-director {
+		box-sizing: border-box;
 		grid-row: 1 / 3;
-		grid-column: 2 / 3;
+
+		padding: 32px;
+
 		background-color: #000;
+	}
+	.inputs .favourite-director .title {
+		color: #fff;
+		
+		margin: 0;
+
+		font-size: 64px;
+		line-height: 1.2;
+	}
+	.inputs .favourite-director .search-box {
+		box-sizing: border-box;
+
+		width: 100%;
+
+		padding: 16px;
+		margin-top: 32px;
+
+		color: #fff;
+		background-color: hsl(0deg 0% 20%);
+		
+		border: 1px solid hsla(0deg, 100%, 100%, 0.25);
+		border-radius: 15px;
+
+		font-size: 20px;
+	}
+	.inputs .favourite-director .search-box:focus {
+		border-color: hsl(220deg 100% 60%);
+		outline: none;
+	}
+	.inputs .date-and-length {
+		box-sizing: border-box;
+		grid-row: 1 / 3;
+		display: flex;
+		flex-direction: column;
+		gap: 48px;
+
+		padding: 64px;
+	}
+	.inputs .date-and-length .title{
+		margin: 0 0 8px 0;
 	}
 	/* .hero .input .input-group {
 		margin: 0 0 30px 0;
