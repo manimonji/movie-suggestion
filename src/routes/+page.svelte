@@ -4,14 +4,20 @@
 
 	import oldVideo from "$lib/videos/charlie.mp4"
 	import oldTitle from "$lib/images/old-title.svg"
+	import filledStar from "$lib/images/star-filled.svg"
+	import outlinedStar from "$lib/images/star-outlined.svg"
     import { fade } from "svelte/transition";
+    import Slider from "../lib/Slider.svelte";
+    import Hero from "../lib/Hero.svelte";
+    import OldFashioned from "../lib/OldFashioned.svelte";
 
 	const stages = {
 		landing: 'landing',
 		inputs: 'inputs',
-		favoriteMovies: 'favoriteMovies'
+		favoriteMovies: 'favoriteMovies',
+		suggestion: 'suggestion'
 	}
-	const stagesList = [stages.landing, stages.inputs]
+	const stagesList = [stages.landing, stages.inputs, stages.favoriteMovies, stages.suggestion]
 	let currentStageIndex = 0;
 	$: if(currentStageIndex >= stagesList.length) {
 		currentStageIndex = 0;
@@ -20,6 +26,7 @@
 	// let inputsVisible = false;
 	function handleClick(e) {
 		currentStageIndex++;
+		console.log('index' + currentStageIndex);
 	}
 	let likesOldMovies = '';
 	let dateArea = {min: 1980, max: 2024};
@@ -31,43 +38,28 @@
 	// let choosenAgeRating;
 	let choice = '';
 	let query = '';
-	function fakeFetch(query) {
+	function fakeFetch(query ,stuff) {
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {
 				resolve(new Response(JSON.stringify(
-					[
-						"Cristopher Nolan",
-						"My brother",
-						"Bodhi Linux",
-						"Bodhi Linux",
-						"Bodhi Linux",
-						"Bodhi Linux",
-						"Bodhi Linux",
-						"Bodhi Linux",
-						"Bodhi Linux",
-						"Bodhi Linux",
-						"Bodhi Linux",
-					]
+					stuff
 				)));
 			}, 200)
 		})
 	}
-	$: results = fakeFetch(query).then(response => response.json());
-	console.log(results);
+	let query2 = '';
+	$: results = fakeFetch(query, ['James cameron', 'Blah']).then(response => response.json());
+	$: results2 = fakeFetch(query2, ['1','2','3','5','6','7','8']).then(response => response.json());
+	let suggestions;
+	let movieRatings = {};
 </script>
 {#if currentStage == stages.landing}
-	<div class="hero">
-		<div class="text">
-			<h1 class="title">دنبال فیلم می گردی؟</h1>
-			<h2 class="subtitle">برات پیدا می کنیم</h2>
-			<button class="btn" on:click={handleClick}>نشونم بده</button>
-		</div>
-	</div>
+	<Hero on:ctaClick={() => currentStageIndex++}></Hero>
+	<OldFashioned></OldFashioned>
 {:else if currentStage == stages.inputs}
-	<div class="inputs">
+	<!-- <article class="inputs">
 		<section class="likes-old-movies section">
 			<img class="image-title" src={oldTitle} alt="Do you like old movies?">
-			<!-- <h1 class="title">قدیمی پسندی؟</h1> -->
 			<video class="video" src={oldVideo} autoplay muted loop>
 				<track kind="captions">
 			</video>
@@ -85,7 +77,7 @@
 				<h2 class="title">طول فیلم</h2>
 				<AreaChoice min={20} max={80} unit="دقیقه" mode="linear" on:change={(e) => lengthArea = e.detail}></AreaChoice>
 			</div>
-			<button class="btn next">بعدی</button>
+			<button class="btn next" on:click={() => currentStageIndex++}>بعدی</button>
 		</section>
 		<section class="favourite-director section">
 			<h1 class="title" >کارگردان مورد علاقه ات کیه؟</h1>
@@ -101,7 +93,7 @@
 				{#await results}
 					<span class="loader" in:fade></span>
 				{:then results} 
-					{#each results as result }
+					{#each results as result}
 						<button class="result" on:click={() => choice = result}>{result}</button>
 					{/each}
 				{/await}
@@ -110,20 +102,101 @@
 				{/if}
 			</section>
 		</section>
-	</div>
+	</article> -->
+{:else if currentStage == stages.favoriteMovies}
+	<article class="favorite-movie">
+		<div class="background"></div>
+		<section class="search-help">
+			<h2>امتیاز دهی</h2>
+			<p>به 6 تا 10 فیلم امتیاز دهید.</p>
+		</section>
+		<section class="search">
+			<input type="text" class="search-box" bind:value={query2}>
+			<section class="results" tabindex="-1">
+				{#await results2}
+					<span class="loader" in:fade></span>	
+				{:then results}
+					{#each results as result}
+						<article class="result">
+							<h4 class="name">{result}</h4>
+							<section class="buttons">
+								{#each Array(5) as _, i}
+									<button class="star-btn" on:click={()=> movieRatings[result] = i + 1} class:filled={(i + 1) <= (movieRatings[result] || 0)}>
+										<img src={outlinedStar} alt="A star" class="star">
+										<img src={filledStar} alt="A star" class="star filled">
+									</button>
+								{/each}
+							</section>
+						</article>
+					{/each}
+				{/await}
+			</section>
+		</section>
+		<section class="ratings-help">
+			<h2>امتیاز های داده شده</h2>
+			<p>اینجا می تونید امتیاز هایی که دادید رو ببینید.</p>
+		</section>
+		<section class="current-ratings">
+			<!-- <section class="movies"> -->
+				{#each Object.keys(movieRatings) as movieName}
+					<article class="movie">
+						<h4 class="name">{movieName}</h4>
+						<section class="buttons">
+							{#each Array(5) as _, i}
+								<button class="star-btn" on:click={()=> movieRatings[movieName] = i + 1} class:filled={(i + 1) <= (movieRatings[movieName] || 0)}>
+									<img src={outlinedStar} alt="A star" class="star">
+									<img src={filledStar} alt="A star" class="star filled">
+								</button>
+							{/each}
+						</section>
+					</article>
+				{/each}
+			<!-- </section> -->
+		</section>
+		<section class="buttons">
+			{#if Object.keys(movieRatings).length >= 6 && Object.keys(movieRatings).length <= 10}
+				<button class="btn" on:click={() => {
+					currentStageIndex++;
+					suggestions = fakeFetch('TODO QUERY', ['Movie 1', 'Movie 2', 'Movie 3', 'Movie 4']).then(response => response.json());
+				}}>پیشنهاد فیلم</button>
+			{/if}
+		</section>
+	</article>
+{:else if currentStage = stages.suggestion}
+	<article class="suggestion">
+		<h3>پیشنهاد ما</h3>
+		{#await suggestions}
+			<span class="loader" in:fade></span>	
+		{:then movies} 
+			<!-- {#each movies as movieName}
+				<article class="movie">
+					<h2 class="name">{movieName}</h2>
+				</article>
+			{/each}-->
+			<Slider data={movies} let:item={movieName}>
+				<article class="movie">
+					<h2 class="name">{movieName}</h2>
+				</article>
+			</Slider>
+		{/await}
+	</article>
 {/if}
 <style>
 	@font-face {
 		font-family: sahel;
 		src: url("$lib/fonts/sahel.woff2");
 	}
+	@font-face {
+		font-family: vazirmatn;
+		src: url("$lib/fonts/vazirmatn.woff2");
+	}
 	:global(body) {
 		margin: 0;
 	}
 	:global(*){
-		font-family: Sahel;
+		font-family: vazirmatn;
 	}
-	.hero {
+	/* .hero {
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -141,7 +214,7 @@
 
 		font-size: 28px;
 		font-weight: 300;
-	}
+	} */
 	.inputs {
 		box-sizing: border-box;
 		display: grid;
@@ -252,7 +325,8 @@
 
 		font-size: 20px;
 	}
-	.inputs .favourite-director .search-box {
+	/* .inputs .favourite-director */
+	.search-box {
 		box-sizing: border-box;
 
 		width: 100%;
@@ -260,18 +334,21 @@
 		padding: 16px;
 
 		color: #fff;
-		background-color: hsl(0deg 0% 20%);
 		
 		border: 1px solid hsla(0deg, 100%, 100%, 0.25);
 		border-radius: 15px;
 
 		font-size: 20px;
 
-		text-align: left;
+		direction: ltr;
 
 		z-index: 1;
 	}
-	.inputs .favourite-director .search-box:focus {
+	.inputs .favourite-director .search-box {
+		background-color: hsl(0deg 0% 20%);
+	} 
+	/* .inputs .favourite-director  */
+	.search-box:focus {
 		border-color: hsl(220deg 100% 60%);
 		outline: none;
 	}
@@ -390,6 +467,119 @@
 		display: flex;
 		align-items: space-between;
 	} */
+	.favorite-movie {
+		display: grid;
+		grid-template-columns: 300px 1fr;
+		grid-auto-rows: fit-content;
+		align-items: start;
+
+		box-sizing: border-box;
+		padding: 32px;
+
+		/* background-color: hsl(0deg 0% 95%); */
+	}
+	.favorite-movie .search {
+		direction: ltr;
+		position: relative;
+	}
+	.favorite-movie .search-box {
+		background-color: hsl(0deg 0% 90%);
+		border-color: hsl(0deg 0% 50%);
+		color: #000;
+
+		position: relative;
+
+		z-index: 2;
+	}
+	.favorite-movie .results, .favorite-movie .current-ratings {
+		flex-wrap: wrap;
+		gap: 15px;
+	}
+	.current-ratings {
+		display: flex;
+	}
+	.favorite-movie .results {
+		display: none;
+		background-color: hsl(0deg 0% 92.5%);
+
+		--padding: 15px;
+		padding: calc(15px + var(--padding)) var(--padding) var(--padding) var(--padding);
+	
+		position: absolute;
+		bottom: 15px;
+
+		border-radius: 15px;
+		transform: translateY(100%);
+
+		z-index: 1;
+	}
+	.favorite-movie .results .result, .favorite-movie .current-ratings .movie{
+		padding: 15px;
+
+		background-color: #fff;
+		
+		border-radius: 10px;
+	}
+	.favorite-movie .results .result .name, .favorite-movie .current-ratings .movie .name{
+		margin: 0;
+
+		text-align: center;
+	}
+	.favorite-movie .results .result .buttons, .favorite-movie .current-ratings .movie .buttons {
+		display: flex;
+	}
+	.favorite-movie .results .result .star-btn, .favorite-movie .current-ratings .movie .star-btn{
+		display: block;
+
+		padding: 0;
+		margin: 0;
+
+		position: relative;
+
+		background: none;
+		border: none;
+	}
+	.favorite-movie .results .result .star-btn.filled .star, .favorite-movie .current-ratings .movie .star-btn.filled .star {
+		opacity: 0;
+	}
+	.favorite-movie .results .result .star-btn.filled .star.filled, .favorite-movie .current-ratings .movie .star-btn.filled .star.filled {
+		opacity: 1;
+	}
+	.favorite-movie .results .result .star-btn:hover .star.filled, .favorite-movie .current-ratings .movie .star-btn:hover .star.filled {
+		opacity: 0.2;
+	}
+	.favorite-movie .results .result .star-btn .star, .favorite-movie .current-ratings .movie .star-btn .star {
+		display: block;
+	}
+	.favorite-movie .results .result .star-btn .star.filled,  .favorite-movie .current-ratings .movie .star-btn .star.filled {
+		position: absolute;
+		top: 0;
+		left: 0;
+
+		opacity: 0;
+	}
+	.favorite-movie .search:focus-within .results,
+	.favorite-movie .search:hover .results {
+		display: flex;
+	}
+	.favorite-movie > .buttons {
+		display: flex;
+		justify-content: center;
+		grid-column: span 2;
+
+		margin-top: 30px;
+	}
+	.suggestion {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+
+		height: 100vh;
+	}
+	.suggestion .movie .name {
+		margin: 0;
+	}
 	.loader {
 		color: #fff;
 		font-size: 10px;
@@ -400,6 +590,18 @@
 		text-indent: -9999em;
 		animation: mulShdSpin 1.3s infinite linear;
 		transform: translateZ(0);
+	}
+	.background {
+		width: 100%;
+		height: 100%;
+
+		position: absolute;
+		top: 0;
+		left: 0;
+
+		background-color: hsl(0deg 0% 97.5%);
+
+		z-index: -1;
 	}
 	@keyframes mulShdSpin {
 		0%,
