@@ -1,6 +1,5 @@
 <script>
     import AreaChoice from "$lib/AreaChoice.svelte";
-	import TwoOptionChoice from "$lib/TwoOptionChoice.svelte";
 
 	import oldVideo from "$lib/videos/charlie.mp4"
 	import oldTitle from "$lib/images/old-title.svg"
