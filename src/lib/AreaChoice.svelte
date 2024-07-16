@@ -10,8 +10,8 @@
 		let { subscribe, set, update } = writable({ min, max });
 		return {
 			subscribe,
-			setMin: (v) => update((obj) => ({min: v.clamp(min, obj.max), max: obj.max})),
-			setMax: (v) => update((obj) => ({min: obj.min, max: v.clamp(obj.min, max)})),
+			setMin: (v) => update((obj) => isNaN(v) ? {min: min, max: obj.max} : ({min: v.clamp(min, obj.max), max: obj.max})),
+			setMax: (v) => update((obj) => isNaN(v) ? {min: obj.min, max: max} : ({min: obj.min, max: v.clamp(obj.min, max)})),
 		}
 	}
 	let container;
@@ -20,22 +20,6 @@
 	export let max;
 	export let mode;
 	let minMax = createMinMax({ min, max });
-	let nums = [min, max];
-	$: {
-		let oldNums = [...nums];
-		let num1 = oldNums[0].clamp(min, oldNums[1]);
-		let num2 = oldNums[1].clamp(oldNums[0], max);
-		console.log(num1, num2);
-		nums = [num1, num2];
-	}
-	// $: if (changedCircle == 'min' && nums[0] > nums[1]) {
-	// 	nums[0] = nums[1];
-	// }
-	// $: if (changedCircle == 'max' && nums[0] > nums[1]) {
-	// 	nums[1] = nums[0];
-	// }
-	// let reversed = false;
-	$: numsSorted = [...nums].sort((a,b) => a - b)
 	$: length = max - min;
 	function getPosition(min, num, length) {
 		return (num - min) / length * 100
@@ -61,16 +45,16 @@
 	{#if mode == "labled"}
 		<div class="inputs labled">
 				<div>
-					از {unit}<input min={min} max={max} step="1" on:change={(e) => minMax.setMin(parseInt(e.target.value))} bind:value={$minMax.min}>
+					از {unit}<input min={min} max={max} step="1" on:change={(e) => minMax.setMin(parseInt(e.target.value))} value={$minMax.min}>
 				</div>
 				<div>
-					تا {unit}<input min={min} max={max} step="1" on:change={(e) => minMax.setMax(parseInt(e.target.value))} bind:value={$minMax.max}>
+					تا {unit}<input min={min} max={max} step="1" on:change={(e) => minMax.setMax(parseInt(e.target.value))} value={$minMax.max}>
 				</div>
 		</div>
 	{:else if mode == "linear"}
 		<div class="inputs linear">
-			از <input min={min} max={max} step="1" on:change={(e) => minMax.setMin(parseInt(e.target.value))} bind:value={$minMax.min}>
-			تا <input min={min} max={max} step="1" on:change={(e) => minMax.setMax(parseInt(e.target.value))} bind:value={$minMax.max}>
+			از <input min={min} max={max} step="1" on:change={(e) => minMax.setMin(parseInt(e.target.value))} value={$minMax.min}>
+			تا <input min={min} max={max} step="1" on:change={(e) => minMax.setMax(parseInt(e.target.value))} value={$minMax.max}>
 			{unit}
 		</div>
 	{/if}

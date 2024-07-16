@@ -9,6 +9,7 @@
     import Slider from "../lib/Slider.svelte";
     import Hero from "../lib/Hero.svelte";
     import OldFashioned from "../lib/OldFashioned.svelte";
+    import Time from "../lib/Time.svelte";
 
 	const stages = {
 		landing: 'landing',
@@ -55,6 +56,7 @@
 {#if currentStage == stages.landing}
 	<Hero on:ctaClick={() => currentStageIndex++}></Hero>
 	<OldFashioned></OldFashioned>
+	<Time></Time>
 {:else if currentStage == stages.inputs}
 	<!-- <article class="inputs">
 		<section class="likes-old-movies section">

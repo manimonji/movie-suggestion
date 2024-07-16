@@ -1,5 +1,5 @@
 <script>
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
 
 	export let right =  0;
 
@@ -24,8 +24,10 @@
 	function handleMouseUp() {
 		isDragging = false;
 	}
-	document.body.addEventListener('mouseup', handleMouseUp);
-	document.body.addEventListener('mousemove', handleMouseMove)
+	onMount(() => {
+		document.body.addEventListener('mouseup', handleMouseUp);
+		document.body.addEventListener('mousemove', handleMouseMove)
+	});
 </script>
 <button class="circle" style={`right: ${right}%`} on:mousedown={handleMouseDown} class:dragged={isDragging}></button>
 <style>
