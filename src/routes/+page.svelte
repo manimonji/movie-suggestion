@@ -6,10 +6,12 @@
 	import filledStar from "$lib/images/star-filled.svg"
 	import outlinedStar from "$lib/images/star-outlined.svg"
     import { fade } from "svelte/transition";
-    import Slider from "../lib/Slider.svelte";
-    import Hero from "../lib/Hero.svelte";
-    import OldFashioned from "../lib/OldFashioned.svelte";
-    import Time from "../lib/Time.svelte";
+    import Slider from "$lib/Slider.svelte";
+    import Hero from "$lib/Hero.svelte";
+    import OldFashioned from "$lib/OldFashioned.svelte";
+    import Time from "$lib/Time.svelte";
+    import PublishDate from "$lib/PublishDate.svelte";
+    import FavouriteDirector from "$lib/FavouriteDirector.svelte";
 
 	const stages = {
 		landing: 'landing',
@@ -57,6 +59,8 @@
 	<Hero on:ctaClick={() => currentStageIndex++}></Hero>
 	<OldFashioned></OldFashioned>
 	<Time></Time>
+	<PublishDate></PublishDate>
+	<FavouriteDirector></FavouriteDirector>
 {:else if currentStage == stages.inputs}
 	<!-- <article class="inputs">
 		<section class="likes-old-movies section">

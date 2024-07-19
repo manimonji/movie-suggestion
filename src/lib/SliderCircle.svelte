@@ -29,30 +29,32 @@
 		document.body.addEventListener('mousemove', handleMouseMove)
 	});
 </script>
-<button class="circle" style={`right: ${right}%`} on:mousedown={handleMouseDown} class:dragged={isDragging}></button>
+<button class="circle" style={`right: ${right}%`} on:mousedown={handleMouseDown} class:dragged={isDragging}>
+	<slot></slot>
+</button>
 <style>
 	.circle {
 		display: block;
 
-		--slider-circle-radius: 15px;
+		/* --slider-circle-radius: 15px;
 		width: var(--slider-circle-radius);
-		height: var(--slider-circle-radius);
+		height: var(--slider-circle-radius); */
 
-		padding: 0;
+		/* padding: 0; */
 
 		position: absolute;
-		top: 0;
+		top: 50%;
 
-		background-color: #fff;
+		/* background-color: #fff;
 
 		border: 3px solid #000;
-		border-radius: 100%;
+		border-radius: 100%; */
 
-		transform: translate(50%, -25%);
+		transform: translate(50%, -50%);
 
 		z-index: 2;
 	}
-	.circle.dragged {
+	/* .circle.dragged {
 		z-index: 3;
-	}
+	} */
 </style>
